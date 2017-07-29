@@ -1,0 +1,496 @@
+swagger: "2.0"
+info:
+  description: "This is the backend of op2l - the organization tool for 'Orientierungsphasen' @ TU Dortmund FSI"
+  version: "0.1.0"
+  title: "op2l"
+  termsOfService: "https://github.com/davidmehren/op2l/"
+  contact:
+    email: "dmehren1@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "ophase.oh14.de"
+basePath: "/api"
+tags:
+- name: "teamer"
+  description: "team members"
+- name: "motto"
+  description: "OP Theme"
+- name: "admin"
+  description: "administrative funktions"
+- name: "config"
+  description: "config for the frontend"
+- name: "login"
+  description: "get a login session"
+schemes:
+- "http"
+paths:
+  /admin/:
+    get:
+      tags:
+      - "admin"
+      summary: "check if you're logged in as admin"
+      responses:
+        401:
+          description: "not logged in"
+        200:
+          description: "you're logged in"
+      security:
+      - admin_auth: []
+  /admin/teamer:
+    get:
+      tags:
+      - "teamer"
+      - "admin"
+      summary: "get all persons in DB"
+      produces:
+      - "application/json"
+      responses:
+        401:
+          description: "not logged in"
+        200:
+          description: "that worked"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Person"
+      security:
+      - admin_auth: []
+  /admin/mottos:
+    get:
+      tags:
+      - "motto"
+      - "admin"
+      summary: "get all mottos in DB"
+      produces:
+      - "application/json"
+      responses:
+        401:
+          description: "not logged in"
+        200:
+          description: "that worked"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Motto"
+      security:
+      - admin_auth: []
+  /config/:
+    get:
+      tags:
+      - "config"
+      summary: "get the config"
+      produces:
+      - "applications/json"
+      responses:
+        200:
+          description: "here's the frontend config"
+          schema:
+            $ref: "#/definitions/Config"
+  /config/motto:
+    get:
+      tags:
+      - "config"
+      summary: "get the config"
+      produces:
+      - "applications/json"
+      responses:
+        200:
+          description: "here's the motto config"
+          schema:
+            $ref: "#/definitions/motto_suggestions"
+  /config/registration:
+    get:
+      tags:
+      - "config"
+      summary: "get the config"
+      produces:
+      - "applications/json"
+      responses:
+        200:
+          description: "here's the registration config"
+          schema:
+            $ref: "#/definitions/teamer_registration"
+  /config/trip:
+    get:
+      tags:
+      - "config"
+      summary: "get the config"
+      produces:
+      - "applications/json"
+      responses:
+        200:
+          description: "here's the trip config"
+          schema:
+            $ref: "#/definitions/teamer_trip"
+  /login/:
+    post:
+      tags:
+      - "login"
+      summary: "login"
+      consumes:
+      - "application/json"
+      produces:
+      - "applications/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/UsernamePassword"
+      responses:
+        401:
+          description: "username/password was not correct"
+        200: 
+          description: "you're logged in"
+          schema:
+            $ref: "#/definitions/Login"
+    delete:
+      tags:
+      - "login"
+      summary: "logout"
+      responses:
+        200:
+          description: "you're logged out"
+    get:
+      tags:
+      - "login"
+      summary: "when logged in get username and usertype"
+      responses:
+        401:
+          description: "you're not logged in"
+        200:
+          description: "you're logged in (remember your name!)"
+          schema:
+            $ref: "#/definitions/Login"
+  /person/:
+    post:
+      tags:
+      - "teamer"
+      summary: "put Person in DB"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/PersonWithCaptcha"
+      responses:
+        400:
+          description: "got no body"
+        200:
+          description: "worked"
+    put:
+      tags:
+      - "teamer"
+      summary: "update Person"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/PersonWithCaptcha"
+      responses:
+        400:
+          description: "got no body"
+        401:
+          description: "not logged in"
+        200:
+          description: "worked"
+      security:
+      - admin_auth: []
+  /person/list:
+    get:
+      tags:
+      - "teamer"
+      summary: "get all persons"
+      produces:
+      - "application/json"
+      responses:
+        401:
+          description: "you're not logged in"
+        200:
+          description: "you're logged in"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Person"
+      security:
+      - admin_auth: []
+  /version:
+    get:
+      summary: "returns version"
+      responses:
+        200:
+          description: "you're logged in"
+          schema:
+            type: "string"
+securityDefinitions:
+  admin_auth:
+    type: "basic"
+  teamer_auth:
+    type: "basic"
+definitions:
+  Person:
+    type: "object"
+    required:
+    - "first_name"
+    - "last_name"
+    - "available_communication"
+    - "language"
+    - "is_helper"
+    - "prev_counter"
+    - "can_present"
+    - "food"
+    - "clothes"
+    - "has_car"
+    - "wants_trip"
+    - "has_training"
+    - "workgroups"
+    - "partner_wish"
+    - "comment"
+    properties:
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      available_communication:
+        $ref: "#/definitions/Communications"
+      language:
+        type: "array"
+        items:
+          type: "string"
+      is_helper:
+        type: "boolean"
+      prev_counter:
+        type: "number"
+      can_present:
+        type: "array"
+        items:
+          $ref: "#/definitions/MinorSubject"
+      food:
+        $ref: "#/definitions/Food"
+      clothes:
+        $ref: "#/definitions/Clothes"
+      has_car:
+        type: "object"
+        required: 
+        - "trip"
+        - "ophase"
+        properties:
+          trip:
+            type: "boolean"
+          ophase:
+            type: "boolean"
+      wants_trip:
+        type: "boolean"
+      has_training:
+        type: "boolean"
+      workgroups:
+        type: "array"
+        items:
+          $ref: "#/definitions/Group"
+      partner_wish:
+        type: "string"
+      comment:
+        type: "string"
+  PersonWithCaptcha:
+    type: "object"
+    required:
+    - "first_name"
+    - "last_name"
+    - "available_communication"
+    - "language"
+    - "is_helper"
+    - "prev_counter"
+    - "can_present"
+    - "food"
+    - "clothes"
+    - "has_car"
+    - "wants_trip"
+    - "has_training"
+    - "workgroups"
+    - "partner_wish"
+    - "comment"
+    properties:
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      available_communication:
+        $ref: "#/definitions/Communications"
+      language:
+        type: "array"
+        items:
+          type: "string"
+      is_helper:
+        type: "boolean"
+      prev_counter:
+        type: "number"
+      can_present:
+        type: "array"
+        items:
+          $ref: "#/definitions/MinorSubject"
+      food:
+        $ref: "#/definitions/Food"
+      clothes:
+        $ref: "#/definitions/Clothes"
+      has_car:
+        type: "object"
+        required: 
+        - "trip"
+        - "ophase"
+        properties:
+          trip:
+            type: "boolean"
+          ophase:
+            type: "boolean"
+      wants_trip:
+        type: "boolean"
+      has_training:
+        type: "boolean"
+      workgroups:
+        type: "array"
+        items:
+          $ref: "#/definitions/Group"
+      partner_wish:
+        type: "string"
+      comment:
+        type: "string"
+  Communications:
+    type: "object"
+    required: 
+    - "email"
+    - "telephone"
+    - "telegram"
+    properties:
+      email:
+        type: "string"
+      telephone:
+        type: "string"
+      telegram:
+        type: "boolean"
+  MinorSubject:
+    type: "object"
+    required: 
+    - "name"
+    properties:
+      name:
+        type: "string"
+  Food:
+    type: "object"
+    required: 
+    - "comment"
+    - "FoodType"
+    properties:
+      comment:
+        type: "string"
+      FoodType:
+        type: "string"
+        enum:
+        - "alles"
+        - "vegetraisch"
+        - "vegan"
+  Clothes:
+    type: "object"
+    required: 
+    - "size"
+    - "girlie"
+    properties:
+      girlie:
+        type: "boolean"
+      size:
+        type: "string"
+        enum:
+        - "XS"
+        - "S"
+        - "M"
+        - "L"
+        - "XL"
+        - "XXL"
+        - "X3L"
+        - "X4L"
+        - "X5L"
+  Group:
+    type: "object"
+    required: 
+    - "name"
+    - "description"
+    - "members"
+    properties:
+      name: 
+        type: "string"
+      description: 
+        type: "string"
+      members: 
+        type: "array"
+        items:
+          $ref: "#/definitions/Person" 
+  Motto:
+    type: "string"
+    description: "the whole body"
+  Config:
+    type: "object"
+    required:
+    - "recaptchaSiteKey"
+    - "motto_suggestions"
+    - "teamer_registration"
+    - "teamer_trip"
+    properties:
+      recaptchaSiteKey:
+        type: "string"
+      #recpatchaSecretKey: 
+      #  type: "string"
+      motto_suggestions: 
+        $ref: "#/definitions/motto_suggestions"
+      teamer_registration:
+        $ref: "#/definitions/teamer_registration"
+      teamer_trip:
+        $ref: "#/definitions/teamer_trip"
+  motto_suggestions:
+    type: "object"
+    required:
+    - "enabled"
+    properties:
+      enabled:
+        type: "boolean"
+  teamer_registration:
+    type: "object"
+    required:
+    - "enabled"
+    properties:
+      enabled:
+        type: "boolean"
+  teamer_trip:
+    type: "object"
+    required:
+    - "enabled"
+    properties:
+      enabled:
+        type: "boolean"
+  Login:
+    type: "object"
+    required:
+    - "username"
+    - "userType"
+    properties:
+      username: 
+        type: "string"
+      userType:
+        type: "string"
+        enum:
+        - "Admin"
+        - "Teamer"
+  UsernamePassword:
+    type: "object"
+    required:
+    - "username"
+    - "password"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
