@@ -4,6 +4,7 @@ import {Communication} from "./Communication";
 import {Food} from "./Food";
 import {Group} from "./Group";
 import {MinorSubject} from "./MinorSubject";
+import {Config} from "./Config";
 
 export class Person {
     /**
@@ -14,7 +15,7 @@ export class Person {
      * @param db any
      * @returns {Promise<any>}
      */
-    public static async from_json(body: any, res: Response, db: any) {
+    public static async from_json(body: any, res: Response, db: any, config: Config) {
         return new Promise(async (resolve, reject) => {
             if (body.firstName === "") {
                 reject();
@@ -64,17 +65,21 @@ export class Person {
                 reject();
                 res.status(900).send("girlie");
             }
-            if (body.hasCar.trip === null) {
-                reject();
-                res.status(900).send("car.trip");
+            if(config.teamerTrip.enabled)
+                if (body.hasCar.trip === null) {
+                    reject();
+                    res.status(900).send("car.trip");
+                }
             }
             if (body.hasCar.ophase === null) {
                 reject();
                 res.status(900).send("car.ophase");
             }
-            if (body.wantsTrip === null) {
-                reject();
-                res.status(900).send("wantsTrip");
+            if(config.teamerTrip.enabled) {
+                if (body.wantsTrip === null) {
+                    reject();
+                    res.status(900).send("wantsTrip");
+                }
             }
             if (body.hasTraining === null) {
                 reject();

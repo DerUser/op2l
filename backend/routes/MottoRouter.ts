@@ -1,16 +1,19 @@
 import * as express from "express";
 import {isAdmin} from "../lib/LoginCheck";
+import {Config} from "../model/Config";
 
 export class MottoRouter {
     public mottoRouter = express.Router();
 
-    constructor(private db: any) {
-        this.mottoRouter.post("/", (req, res) => {
-            const mottodb = db.get("mottos");
-            const body = req.body;
-            mottodb.insert(body);
-            res.send(body);
-        });
+    constructor(private db: any, private config: Config) {
+        if(config.mottoSuggestions.enabled) {
+            this.mottoRouter.post("/", (req, res) => {
+                const mottodb = db.get("mottos");
+                const body = req.body;
+                mottodb.insert(body);
+                res.send(body);
+            });
+        }
 
         /**
          * API for getting the list of mottos.

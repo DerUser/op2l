@@ -17,24 +17,25 @@ export class PersonRouter {
             secretKey: config.recpatchaSecretKey,
             siteKey: config.recaptchaSiteKey,
         });
+        if(config.teamerRegistration.enabled) {
+            this.personRouter.get("/me", async (request: any, response: express.Response) => {
+                response.json(request.dbUser);
+            });
 
-        this.personRouter.get("/me", async (request: any, response: express.Response) => {
-            response.json(request.dbUser);
-        });
-
-        this.personRouter.post("/", async (request: any, response: express.Response) => {
-            const personDb = db.get("persons");
-            this.recaptcha.validate(request.body.captcha)
-                .then(async () => {
-                    const person: any = await Person.from_json(request.body, response, db);
-                    delete person.captcha;
-                    const result = await personDb.insert(person);
-                    response.send(result);
-                })
-                .catch(() => {
-                    response.sendStatus(400);
-                });
-        });
+            this.personRouter.post("/", async (request: any, response: express.Response) => {
+                const personDb = db.get("persons");
+                this.recaptcha.validate(request.body.captcha)
+                    .then(async () => {
+                        const person: any = await Person.from_json(request.body, response, db, config);
+                        delete person.captcha;
+                        const result = await personDb.insert(person);
+                        response.send(result);
+                    })
+                    .catch(() => {
+                        response.sendStatus(400);
+                    });
+            });
+        }
 
         this.personRouter.put("/", async (request: any, response: express.Response) => {
             if (!isAdmin(request)) {

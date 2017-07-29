@@ -103,7 +103,7 @@ export class OPhaseApi {
         logger.info("Configuring routes...");
         app.use("/person", new PersonRouter(this.config, this.db).personRouter);
         app.use("/version", new VersionRouter().versionRouter);
-        app.use("/motto", new MottoRouter(this.db).mottoRouter);
+        app.use("/motto", new MottoRouter(this.db, this.config).mottoRouter);
         app.use("/config", new ConfigRouter(this.config).configRouter);
         app.use("/login", new LoginRouter(this.db).loginRouter);
         app.use("/admin", new AdminRouter().adminRouter);
