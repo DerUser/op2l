@@ -5,7 +5,6 @@ import {MottoVorschlag} from "../model/MottoVorschlag";
 
 export class MottoRouter {
     public mottoRouter = express.Router();
-  
     constructor(private db: any, private config: Config) {
         if (config.mottoSuggestions.enabled) {
             this.mottoRouter.post("/", (req, res) => {
