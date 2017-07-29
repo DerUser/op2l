@@ -17,7 +17,7 @@ export class PersonRouter {
             secretKey: config.recpatchaSecretKey,
             siteKey: config.recaptchaSiteKey,
         });
-        if(config.teamerRegistration.enabled) {
+        if (config.teamerRegistration.enabled) {
             this.personRouter.get("/me", async (request: any, response: express.Response) => {
                 response.json(request.dbUser);
             });

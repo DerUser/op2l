@@ -7,7 +7,7 @@ export class MottoRouter {
     public mottoRouter = express.Router();
   
     constructor(private db: any, private config: Config) {
-        if(config.mottoSuggestions.enabled) {
+        if (config.mottoSuggestions.enabled) {
             this.mottoRouter.post("/", (req, res) => {
               const mottodb = db.get("mottos");
               const motto = new MottoVorschlag(req.body.motto, req.body.name);

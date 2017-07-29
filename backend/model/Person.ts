@@ -1,10 +1,10 @@
 import {Response} from "express";
 import {Clothes} from "./Clothes";
 import {Communication} from "./Communication";
+import {Config} from "./Config";
 import {Food} from "./Food";
 import {Group} from "./Group";
 import {MinorSubject} from "./MinorSubject";
-import {Config} from "./Config";
 
 export class Person {
     /**
@@ -13,6 +13,7 @@ export class Person {
      * @param body Express.Request body
      * @param res Express.Response
      * @param db any
+     * @param config Config Object
      * @returns {Promise<any>}
      */
     public static async from_json(body: any, res: Response, db: any, config: Config) {
@@ -65,17 +66,17 @@ export class Person {
                 reject();
                 res.status(900).send("girlie");
             }
-            if(config.teamerTrip.enabled)
+            if (config.teamerTrip.enabled) {
                 if (body.hasCar.trip === null) {
                     reject();
                     res.status(900).send("car.trip");
                 }
-            }
+             }
             if (body.hasCar.ophase === null) {
                 reject();
                 res.status(900).send("car.ophase");
             }
-            if(config.teamerTrip.enabled) {
+            if (config.teamerTrip.enabled) {
                 if (body.wantsTrip === null) {
                     reject();
                     res.status(900).send("wantsTrip");
@@ -87,24 +88,24 @@ export class Person {
             }
             resolve(body);
         });
-    }
+}
 
-    public firstName: string;
-    public lastName: string;
-    public availableCommunication: Communication;
-    public languages: string[];
-    public isHelper: boolean;
-    public prevCount: number;
-    public canPresent: MinorSubject[];
-    public food: Food;
-    public clothes: Clothes;
-    public hasCar: {
-        trip: boolean;
-        ophase: boolean;
-    };
-    public wantsTrip: boolean;
-    public hasTraining: boolean;
-    public workgroups: Group[];
-    public partnerWish: string;
-    public comment: string;
+public firstName: string;
+public lastName: string;
+public availableCommunication: Communication;
+public languages: string[];
+public isHelper: boolean;
+public prevCount: number;
+public canPresent: MinorSubject[];
+public food: Food;
+public clothes: Clothes;
+public hasCar: {
+    trip: boolean;
+    ophase: boolean;
+};
+public wantsTrip: boolean;
+public hasTraining: boolean;
+public workgroups: Group[];
+public partnerWish: string;
+public comment: string;
 }
