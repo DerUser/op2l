@@ -15,11 +15,11 @@ env:
 services: mongodb
 
 install:
-  - "npm i -g tslint typescript mocha chai request"
+  - "yarn i -g tslint typescript mocha chai request"
   - "cd $TEST_DIR && npm install"
 
 script:
   - tslint -p tsconfig.json -c tslint.json
-  - npm test
+  - yarn test
 
 
