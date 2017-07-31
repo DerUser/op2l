@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocca"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
+    "babel": "^6.23.0",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "chai": "^4.1.0",
