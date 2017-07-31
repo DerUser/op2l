@@ -3,19 +3,23 @@ node_js:
 - 'node'
 
 env:
-  - TEST_DIR=frontend
-  - TEST_DIR=backend
-  - DEBUG=true
-  - DB_NAME=op-dev;
-  - NODE_ENV=development
-  - PORT=5000
+  global:
+    - DEBUG=true
+    - DB_NAME=op-dev
+    - NODE_ENV=development
+    - PORT=5000
+  matrix:
+    - TEST_DIR=frontend
+    - TEST_DIR=backend
 
 services: mongodb
 
 install:
-  - "npm i -g tslint typescript"
+  - "npm i -g tslint typescript mocha chai request"
   - "cd $TEST_DIR && npm install"
 
-script: tslint -p tsconfig.json -c tslint.json
+script:
+  - tslint -p tsconfig.json -c tslint.json
+  - npm test
 
 
